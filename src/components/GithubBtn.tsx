@@ -1,6 +1,7 @@
 import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import styled from "styled-components";
 import { auth } from "../routes/firebase";
+import { useNavigate } from "react-router-dom";
 
 const Button = styled.button`
   margin-top: 50px;
@@ -23,10 +24,13 @@ const Logo = styled.img`
 `;
 
 const GithubBtn = () => {
+  const navigate = useNavigate();
+
   const onClick = async () => {
     try {
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
+      navigate("/");
     } catch (e) {
       console.error(e);
     }
