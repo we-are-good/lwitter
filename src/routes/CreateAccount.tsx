@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { auth } from "./firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
-import GithubBtn from "../components/githubBtn";
+import GithubBtn from "../components/GithubBtn";
 
 const Wrapper = styled.section`
   height: 100%;
