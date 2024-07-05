@@ -1,7 +1,8 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
 import styled from "styled-components";
-import { auth, database } from "../../routes/firebase";
+import { auth, database, storage } from "../../routes/firebase";
 
 const Form = styled.form`
   display: flex;
@@ -67,6 +68,10 @@ const PostTweetForm = () => {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (files && files.length === 1) {
+      if (file && file.size > 1 * 1024 * 1024) {
+        alert("1MB 이하의 파일만 첨부할 수 있습니다.");
+        setFile(null);
+      }
       setFile(files[0]);
     }
   };
@@ -77,12 +82,25 @@ const PostTweetForm = () => {
     if (!user || isLoading || tweet === "" || tweet.length > 180) return;
     try {
       setIsLoading(true);
-      await addDoc(collection(database, "tweets"), {
-        tweets: tweet,
+      const doc = await addDoc(collection(database, "tweets"), {
+        tweet: tweet,
         createdAt: Date.now(),
         username: user.displayName || "익명",
         userId: user.uid,
       });
+
+      if (file) {
+        const locationRef = ref(
+          storage,
+          `tweets/${user.uid}-${user.displayName}/${doc.id}`
+        );
+        const result = await uploadBytes(locationRef, file);
+        const url = await getDownloadURL(result.ref);
+        await updateDoc(doc, { photo: url });
+      }
+
+      setTweet("");
+      setFile(null);
     } catch (e) {
       console.log(e);
     } finally {
@@ -98,6 +116,7 @@ const PostTweetForm = () => {
         onChange={onChange}
         placeholder="무슨일이 일어나고 있나요?"
         value={tweet}
+        required
       />
       <AttachFileButton htmlFor="file">
         {file ? "이미지가 추가되었습니다." : "이미지 첨부"}
