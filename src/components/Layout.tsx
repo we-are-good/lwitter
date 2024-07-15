@@ -13,18 +13,23 @@ const Wrapper = styled.div`
 `;
 
 const Menu = styled.div`
+  padding: 20px 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  border-radius: 20px;
+  background-color: rgba(237, 246, 249, 1);
 `;
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
+  flex-direction: row;
+  gap: 5px;
+  width: 140px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 20px;
   cursor: pointer;
   border: 2px solid white;
   background-color: white;
@@ -36,6 +41,12 @@ const MenuItem = styled.div`
     border-color: tomato;
     background-color: tomato;
   }
+`;
+
+const MenuText = styled.p`
+  color: black;
+  font-weight: 900;
+  border: none;
 `;
 
 const Layout = () => {
@@ -53,15 +64,30 @@ const Layout = () => {
         <Link to="/">
           <MenuItem>
             <img src="/home.svg" />
+            <MenuText>Home</MenuText>
+          </MenuItem>
+        </Link>
+        <Link to="/search">
+          <MenuItem>
+            <img src="/search.svg" />
+            <MenuText>Search</MenuText>
+          </MenuItem>
+        </Link>
+        <Link to="/bookmarks">
+          <MenuItem>
+            <img src="/bookmarks.svg" />
+            <MenuText>BookMarks</MenuText>
           </MenuItem>
         </Link>
         <Link to="/profile">
           <MenuItem>
             <img src="/user.svg" />
+            <MenuText>Profile</MenuText>
           </MenuItem>
         </Link>
         <MenuItem className="log-out" onClick={onLogOut}>
           <img src="/logout.svg" />
+          <MenuText>Log-out</MenuText>
         </MenuItem>
       </Menu>
       <Outlet />

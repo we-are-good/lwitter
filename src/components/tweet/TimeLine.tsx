@@ -1,3 +1,4 @@
+import { Unsubscribe } from "firebase/auth";
 import {
   collection,
   limit,
@@ -8,8 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { database } from "../../routes/firebase";
-import Tweet from "./tweet";
-import { Unsubscribe } from "firebase/auth";
+import TweetContents from "./TweetContents";
 
 export interface TweetType {
   id: string;
@@ -26,6 +26,9 @@ const Wrapper = styled.div`
   margin-top: 25px;
   gap: 20px;
   overflow-y: scroll;
+  background-color: rgba(237, 246, 249, 1);
+  border-radius: 15px;
+  padding: 20px;
 `;
 
 const TimeLine = () => {
@@ -60,7 +63,7 @@ const TimeLine = () => {
   return (
     <Wrapper>
       {tweets.map((tweet) => (
-        <Tweet key={tweet.id} {...tweet} />
+        <TweetContents key={tweet.id} {...tweet} />
       ))}
     </Wrapper>
   );

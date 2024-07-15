@@ -8,21 +8,25 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: rgba(237, 246, 249, 1);
+  border-radius: 15px;
+  padding: 20px;
 `;
 
 const TextArea = styled.textarea`
-  border: 2px solid white;
+  border: none;
   padding: 20px;
   border-radius: 20px;
   font-size: 16px;
-  color: white;
-  background-color: black;
-  width: 100%;
+  color: black;
+  background-color: rgba(216, 243, 220, 1);
+  width: 70%;
   resize: none;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   &::placeholder {
     font-size: 16px;
+    font-weight: 700;
   }
   &:focus {
     outline: none;
@@ -31,7 +35,8 @@ const TextArea = styled.textarea`
 `;
 
 const AttachFileButton = styled.label`
-  padding: 10px 0px;
+  padding: 10px;
+  width: 4rem;
   color: #1d9bf0;
   text-align: center;
   border-radius: 20px;
@@ -68,7 +73,7 @@ const PostTweetForm = () => {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
     if (files && files.length === 1) {
-      if (file && file.size > 1 * 1024 * 1024) {
+      if (files[0] && files[0].size > 1 * 1024 * 1024) {
         alert("1MB 이하의 파일만 첨부할 수 있습니다.");
         setFile(null);
       }
@@ -116,7 +121,7 @@ const PostTweetForm = () => {
         required
       />
       <AttachFileButton htmlFor="file">
-        {file ? "이미지가 추가되었습니다." : "이미지 첨부"}
+        {file ? "image ok" : "image"}
       </AttachFileButton>
       <AttachFileInput
         id="file"
