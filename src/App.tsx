@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import LoadingScreen from "./components/LoadingScreen";
 import { auth } from "./routes/firebase";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Search from "./routes/Search";
+import BookMarks from "./routes/BookMarks";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "/search",
+        element: <Search />,
+      },
+      {
+        path: "/BookMarks",
+        element: <BookMarks />,
       },
     ],
   },
