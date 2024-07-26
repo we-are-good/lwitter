@@ -6,11 +6,23 @@ import { auth, database, storage } from "../../routes/firebase";
 
 const Form = styled.form`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   background-color: rgba(237, 246, 249, 1);
   border-radius: 15px;
   padding: 20px;
+`;
+
+const ButtonsBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const AttachedContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 `;
 
 const TextArea = styled.textarea`
@@ -120,16 +132,22 @@ const PostTweetForm = () => {
         value={tweet}
         required
       />
-      <AttachFileButton htmlFor="file">
-        {file ? "image ok" : "image"}
-      </AttachFileButton>
-      <AttachFileInput
-        id="file"
-        type="file"
-        accept="image/*"
-        onChange={onFileChange}
-      />
-      <SubmitBtn type="submit" value={isLoading ? "Posting" : "Post-Tweet"} />
+      <ButtonsBox>
+        <AttachedContent>
+          <AttachFileButton htmlFor="file">
+            {file ? "image ok" : "image"}
+          </AttachFileButton>
+          <AttachFileInput
+            id="file"
+            type="file"
+            accept="image/*"
+            onChange={onFileChange}
+          />
+          <button>Surveys</button>
+          <button>video</button>
+        </AttachedContent>
+        <SubmitBtn type="submit" value={isLoading ? "Posting" : "Post-Tweet"} />
+      </ButtonsBox>
     </Form>
   );
 };

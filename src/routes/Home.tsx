@@ -1,13 +1,6 @@
-import styled from "styled-components";
-import PostTweetForm from "../components/tweet/PostTweetForm";
-import TimeLine from "../components/tweet/TimeLine";
-
-const Wrapper = styled.div`
-  display: gird;
-  gap: 50px;
-  overflow-y: scroll;
-  grid-template-rows: 1fr 5fr;
-`;
+import PostTweetForm from "../components/home/PostTweetForm";
+import TimeLine from "../components/home/TimeLine";
+import { Wrapper } from "../style/homeStyle";
 
 const Home = () => {
   return (

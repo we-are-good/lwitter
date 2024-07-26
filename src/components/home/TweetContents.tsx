@@ -8,7 +8,8 @@ import {
 import React, { useState } from "react";
 import styled from "styled-components";
 import { auth, database, storage } from "../../routes/firebase";
-import { TweetType } from "./TimeLine";
+
+import type { TweetType } from "../../utils/types";
 
 const Wrapper = styled.article`
   display: grid;
@@ -132,7 +133,7 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
     try {
       await deleteDoc(doc(database, "tweets", id));
       if (photo) {
-        const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
+        const photoRef = ref(storage, `tweets/${user?.uid}/${id}`);
         await deleteObject(photoRef);
       }
     } catch (e) {
@@ -175,7 +176,7 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
         if (editPhoto?.size > 1 * 1024 * 1024) {
           return alert("1MB 이하의 파일만 업로드할 수 있습니다.");
         }
-        const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
+        const photoRef = ref(storage, `tweets/${user?.uid}/${id}`);
         const result = await uploadBytes(photoRef, editPhoto);
         const url = await getDownloadURL(result.ref);
         console.log(url);
@@ -220,7 +221,6 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
         )}
         {photo ? <Photo src={photo} /> : null}
       </ContentsRow>
-      <div></div>
       <RightButtons>
         {user?.uid === userId ? (
           <Buttons>

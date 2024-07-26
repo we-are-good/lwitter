@@ -7,18 +7,11 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import TweetContents from "../tweet/TweetContents";
+import { TimeLineWrapper } from "../../style/homeStyle";
+import TweetContents from "../home/TweetContents";
 import { auth, database } from "./../../routes/firebase";
 
-import type { TweetType } from "../tweet/TimeLine";
-
-const Tweets = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-`;
+import type { TweetType } from "../../utils/types";
 
 const Mytweets = () => {
   const user = auth.currentUser;
@@ -44,11 +37,11 @@ const Mytweets = () => {
     fetchTweets();
   }, []);
   return (
-    <Tweets>
+    <TimeLineWrapper>
       {currentUserTweets.map((tweet) => (
         <TweetContents key={tweet.id} {...tweet} />
       ))}
-    </Tweets>
+    </TimeLineWrapper>
   );
 };
 

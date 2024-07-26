@@ -1,5 +1,12 @@
+import SearchTweets from "../components/search/SearchTweets";
+import { Wrapper } from "../style/homeStyle";
+
 const Search = () => {
-  return <div>Search</div>;
+  return (
+    <Wrapper>
+      <SearchTweets />
+    </Wrapper>
+  );
 };
 
 export default Search;

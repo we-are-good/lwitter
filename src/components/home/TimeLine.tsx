@@ -7,29 +7,11 @@ import {
   query,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
 import { database } from "../../routes/firebase";
+import { TimeLineWrapper } from "../../style/homeStyle";
 import TweetContents from "./TweetContents";
 
-export interface TweetType {
-  id: string;
-  photo?: string;
-  tweet: string;
-  userId: string;
-  username: string;
-  createdAt: number;
-}
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 25px;
-  gap: 20px;
-  overflow-y: scroll;
-  background-color: rgba(237, 246, 249, 1);
-  border-radius: 15px;
-  padding: 20px;
-`;
+import type { TweetType } from "../../utils/types";
 
 const TimeLine = () => {
   const [tweets, setTweets] = useState<TweetType[]>([]);
@@ -61,11 +43,11 @@ const TimeLine = () => {
     };
   }, []);
   return (
-    <Wrapper>
+    <TimeLineWrapper>
       {tweets.map((tweet) => (
         <TweetContents key={tweet.id} {...tweet} />
       ))}
-    </Wrapper>
+    </TimeLineWrapper>
   );
 };
 
