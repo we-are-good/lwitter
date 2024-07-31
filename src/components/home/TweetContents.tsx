@@ -70,14 +70,35 @@ const EditButton = styled.button`
   width: 70px;
   width: 50px;
 `;
-const EditText = styled.textarea``;
+const EditText = styled.textarea`
+  border: none;
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  color: black;
+  background-color: rgba(216, 243, 220, 1);
+  width: 70%;
+  resize: none;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  &::placeholder {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  &:focus {
+    outline: none;
+    border-color: #1d9bf0;
+  }
+`;
 
 const EditPhoto = styled.input``;
 
 const Buttons = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   gap: 10px;
+  padding: 0px 10px;
 `;
 
 const ChangeButton = styled.button`
@@ -112,19 +133,18 @@ const Avatar = styled.label`
 const AvatarImg = styled.img`
   width: 100%;
 `;
-const ContentsRow = styled.div``;
 
-const RightButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
+const BookMarksBtn = styled.div`
+  width: 30px;
+  height: 30px;
 `;
 
 const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(tweet);
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
+  const [isBookMarked, setIsBookMarked] = useState(false);
+  const [isThumbUp, setIsThumbUp] = useState(false);
   const user = auth.currentUser;
 
   const onDelete = async () => {
@@ -189,6 +209,14 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
       setIsEditing(false);
     }
   };
+
+  const handleBookMark = () => {
+    setIsBookMarked((prev) => !prev);
+  };
+
+  const handleThumbUp = () => {
+    setIsThumbUp((prev) => !prev);
+  };
   return (
     <Wrapper>
       <Column>
@@ -212,7 +240,7 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
         </Avatar>
         <Username>{username}</Username>
       </Column>
-      <ContentsRow>
+      <div>
         {isEditing ? <EditPhoto type="file" onChange={onFileChange} /> : null}
         {!isEditing ? (
           <Payload>{tweet}</Payload>
@@ -220,25 +248,55 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
           <EditText value={editText} onChange={onEditChange} />
         )}
         {photo ? <Photo src={photo} /> : null}
-      </ContentsRow>
-      <RightButtons>
-        {user?.uid === userId ? (
-          <Buttons>
-            <DeleteButton type="button" onClick={onDelete}>
-              삭제
-            </DeleteButton>
-            {!isEditing ? (
-              <EditButton type="button" onClick={onEdit}>
-                수정
-              </EditButton>
-            ) : (
-              <ChangeButton type="button" onClick={onCompleteEdition}>
-                완료
-              </ChangeButton>
-            )}
-          </Buttons>
-        ) : null}
-      </RightButtons>
+      </div>
+      {user?.uid === userId ? (
+        <Buttons>
+          <DeleteButton type="button" onClick={onDelete}>
+            삭제
+          </DeleteButton>
+          {!isEditing ? (
+            <EditButton type="button" onClick={onEdit}>
+              수정
+            </EditButton>
+          ) : (
+            <ChangeButton type="button" onClick={onCompleteEdition}>
+              완료
+            </ChangeButton>
+          )}
+        </Buttons>
+      ) : null}
+      <Buttons>
+        <BookMarksBtn onClick={handleBookMark}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={isBookMarked ? "red" : "none"}
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke={isBookMarked ? "transparent" : "currentColor"}
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+            />
+          </svg>
+        </BookMarksBtn>
+        <BookMarksBtn onClick={handleThumbUp}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={isThumbUp ? "red" : "none"}
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke={isThumbUp ? "transparent" : "currentColor"}
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
+            />
+          </svg>
+        </BookMarksBtn>
+      </Buttons>
     </Wrapper>
   );
 };

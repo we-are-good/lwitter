@@ -46,14 +46,14 @@ const TextArea = styled.textarea`
   }
 `;
 
-const AttachFileButton = styled.label`
+const AttachMediaButton = styled.label`
   padding: 10px;
   width: 4rem;
   color: #1d9bf0;
   text-align: center;
   border-radius: 20px;
   border: 1px solid #1d9bf0;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 `;
@@ -134,17 +134,17 @@ const PostTweetForm = () => {
       />
       <ButtonsBox>
         <AttachedContent>
-          <AttachFileButton htmlFor="file">
+          <AttachMediaButton htmlFor="file">
             {file ? "image ok" : "image"}
-          </AttachFileButton>
+          </AttachMediaButton>
           <AttachFileInput
             id="file"
             type="file"
             accept="image/*"
             onChange={onFileChange}
           />
-          <button>Surveys</button>
-          <button>video</button>
+          <AttachMediaButton>Surveys</AttachMediaButton>
+          <AttachMediaButton>video</AttachMediaButton>
         </AttachedContent>
         <SubmitBtn type="submit" value={isLoading ? "Posting" : "Post-Tweet"} />
       </ButtonsBox>

@@ -12,7 +12,6 @@ export const TimeLineWrapper = styled.div`
   flex-direction: column;
   margin-top: 25px;
   gap: 20px;
-  overflow-y: scroll;
   background-color: rgba(237, 246, 249, 1);
   border-radius: 15px;
   padding: 20px;

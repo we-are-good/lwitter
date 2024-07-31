@@ -1,5 +1,7 @@
+import BookMarkstweets from "../components/bookMarks/BookMarksTweets";
+
 const BookMarks = () => {
-  return <div>BookMarks</div>;
+  return <BookMarkstweets />;
 };
 
 export default BookMarks;
