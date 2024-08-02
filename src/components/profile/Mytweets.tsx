@@ -25,9 +25,18 @@ const Mytweets = () => {
       limit(25)
     );
     const snapshot = await getDocs(tweetQuery);
-    const tweets = snapshot.docs.map((doc) => {
-      const { tweet, createdAt, userId, username, photo } = doc.data();
-      return { tweet, createdAt, userId, username, photo, id: doc.id };
+    const tweets: TweetType[] = snapshot.docs.map((doc) => {
+      const { tweet, createdAt, userId, username, photo, bookMarks } =
+        doc.data();
+      return {
+        tweet,
+        createdAt,
+        userId,
+        username,
+        photo,
+        bookMarks,
+        id: doc.id,
+      };
     });
 
     setCurrentUserTweets(tweets);

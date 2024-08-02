@@ -24,15 +24,19 @@ const TimeLine = () => {
         orderBy("createdAt", "desc"),
         limit(25)
       );
-      // const snapshot = await getDocs(tweetsQuery);
-      // const documentTweets = snapshot.docs.map((doc) => {
-      //   const { tweet, createdAt, userId, username, photo } = doc.data();
-      //   return { tweet, createdAt, userId, username, photo, id: doc.id };
-      // });
       unsubscribe = await onSnapshot(tweetsQuery, (snapshot) => {
         const documentTweets = snapshot.docs.map((doc) => {
-          const { tweet, createdAt, userId, username, photo } = doc.data();
-          return { tweet, createdAt, userId, username, photo, id: doc.id };
+          const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
+            doc.data();
+          return {
+            tweet,
+            createdAt,
+            userId,
+            username,
+            photo,
+            bookMarkUserIds,
+            id: doc.id,
+          };
         });
         setTweets(documentTweets);
       });

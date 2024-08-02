@@ -61,11 +61,19 @@ const SearchTweets = () => {
       orderBy("createdAt", "desc"),
       limit(25)
     );
-    console.log("search", search);
     const snapshot = await getDocs(tweetQuery);
     const tweets = snapshot.docs.map((doc) => {
-      const { tweet, createdAt, userId, username, photo } = doc.data();
-      return { tweet, createdAt, userId, username, photo, id: doc.id };
+      const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
+        doc.data();
+      return {
+        tweet,
+        createdAt,
+        userId,
+        username,
+        photo,
+        bookMarkUserIds,
+        id: doc.id,
+      };
     });
     setTweets(tweets);
   };

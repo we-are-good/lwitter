@@ -3,6 +3,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
 import styled from "styled-components";
 import { auth, database, storage } from "../../routes/firebase";
+import { TweetType } from "../../utils/types";
 
 const Form = styled.form`
   display: flex;
@@ -104,7 +105,8 @@ const PostTweetForm = () => {
         createdAt: Date.now(),
         username: user.displayName || "익명",
         userId: user.uid,
-      });
+        bookMarkUserIds: [] as Array<string>,
+      } as TweetType);
 
       if (file) {
         const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);
@@ -116,7 +118,7 @@ const PostTweetForm = () => {
       setTweet("");
       setFile(null);
     } catch (e) {
-      console.log(e);
+      console.error(Error);
     } finally {
       setIsLoading(false);
     }

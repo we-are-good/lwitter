@@ -1,10 +1,10 @@
 import { FirebaseError } from "firebase/app";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { auth } from "./firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import GithubBtn from "../components/GithubBtn";
+import { auth } from "./firebase";
 
 const Wrapper = styled.section`
   height: 100%;

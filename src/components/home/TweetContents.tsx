@@ -1,11 +1,21 @@
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import {
   deleteObject,
   getDownloadURL,
   ref,
   uploadBytes,
 } from "firebase/storage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth, database, storage } from "../../routes/firebase";
 
@@ -139,12 +149,18 @@ const BookMarksBtn = styled.div`
   height: 30px;
 `;
 
-const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
+const TweetContents = ({
+  username,
+  photo,
+  tweet,
+  userId,
+  id,
+  bookMarkUserIds,
+}: TweetType) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(tweet);
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [isBookMarked, setIsBookMarked] = useState(false);
-  const [isThumbUp, setIsThumbUp] = useState(false);
   const user = auth.currentUser;
 
   const onDelete = async () => {
@@ -198,8 +214,7 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
         }
         const photoRef = ref(storage, `tweets/${user?.uid}/${id}`);
         const result = await uploadBytes(photoRef, editPhoto);
-        const url = await getDownloadURL(result.ref);
-        console.log(url);
+        await getDownloadURL(result.ref);
       }
     } catch (e) {
       console.error(e);
@@ -210,13 +225,82 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
     }
   };
 
-  const handleBookMark = () => {
-    setIsBookMarked((prev) => !prev);
+  const handleBookMark = async () => {
+    if (!user) return;
+    try {
+      setIsBookMarked(true);
+      addTweetBookMark();
+      addUserBookMark();
+    } catch {
+      console.error(Error);
+    }
   };
 
-  const handleThumbUp = () => {
-    setIsThumbUp((prev) => !prev);
+  const deleteBookMark = async () => {
+    if (!user) return;
+    try {
+      setIsBookMarked(false);
+      deleteTweetBookMark();
+      deleteUserBookMark();
+    } catch {
+      console.error(Error);
+    }
   };
+
+  const deleteTweetBookMark = async () => {
+    const tweetRef = doc(database, "tweets", id);
+    updateDoc(tweetRef, { bookMarkUserIds: arrayRemove(user?.uid) });
+  };
+
+  const addTweetBookMark = async () => {
+    const tweetRef = doc(database, "tweets", id);
+    const newBookmarkUserIds = [user?.uid];
+    updateDoc(tweetRef, { bookMarkUserIds: arrayUnion(...newBookmarkUserIds) });
+  };
+
+  const deleteUserBookMark = async () => {
+    const userBookMarksQuery = query(
+      collection(database, "bookMarks"),
+      where("userId", "==", user?.uid)
+    );
+    const snapshot = await getDocs(userBookMarksQuery);
+    const userBookMarks = snapshot.docs.map((doc) => {
+      const { bookMarks, userId } = doc.data();
+      return { bookMarks, userId, bookMarksId: doc.id };
+    });
+    const userBookMarksRef = doc(
+      database,
+      "bookMarks",
+      userBookMarks[0].bookMarksId
+    );
+    updateDoc(userBookMarksRef, { bookMarks: arrayRemove(id) });
+  };
+
+  const addUserBookMark = async () => {
+    const userBookMarksQuery = query(
+      collection(database, "bookMarks"),
+      where("userId", "==", user?.uid)
+    );
+    const snapshot = await getDocs(userBookMarksQuery);
+    const userBookMarks = snapshot.docs.map((doc) => {
+      const { bookMarks, userId } = doc.data();
+      return { bookMarks, userId, bookMarksId: doc.id };
+    });
+    const userBookMarksRef = doc(
+      database,
+      "bookMarks",
+      userBookMarks[0].bookMarksId
+    );
+    const newUserBookMarks = [id];
+    updateDoc(userBookMarksRef, { bookMarks: arrayUnion(...newUserBookMarks) });
+  };
+
+  useEffect(() => {
+    if (bookMarkUserIds.find((user) => user === userId)) {
+      setIsBookMarked(true);
+    }
+  }, []);
+
   return (
     <Wrapper>
       <Column>
@@ -231,9 +315,9 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
               className="size-6"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
           )}
@@ -266,36 +350,22 @@ const TweetContents = ({ username, photo, tweet, userId, id }: TweetType) => {
         </Buttons>
       ) : null}
       <Buttons>
-        <BookMarksBtn onClick={handleBookMark}>
+        <BookMarksBtn onClick={isBookMarked ? deleteBookMark : handleBookMark}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill={isBookMarked ? "red" : "none"}
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke={isBookMarked ? "transparent" : "currentColor"}
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
             />
           </svg>
         </BookMarksBtn>
-        <BookMarksBtn onClick={handleThumbUp}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill={isThumbUp ? "red" : "none"}
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke={isThumbUp ? "transparent" : "currentColor"}
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z"
-            />
-          </svg>
-        </BookMarksBtn>
+        <div>{bookMarkUserIds.length}</div>
       </Buttons>
     </Wrapper>
   );

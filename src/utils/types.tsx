@@ -5,4 +5,10 @@ export interface TweetType {
   userId: string;
   username: string;
   createdAt: number;
+  bookMarkUserIds: Array<string>;
 }
+
+export type bookMarks = {
+  userId: string;
+  bookMarks: Array<string>;
+};

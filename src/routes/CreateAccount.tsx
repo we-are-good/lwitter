@@ -1,10 +1,11 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { auth } from "./firebase";
+import { auth, database } from "./firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import GithubBtn from "../components/GithubBtn";
+import { addDoc, collection } from "firebase/firestore";
 
 const Wrapper = styled.section`
   height: 100%;
@@ -89,6 +90,7 @@ const CreateAccount = () => {
       await updateProfile(credentials.user, {
         displayName: name,
       });
+      onBookMarks();
       navigate("/");
     } catch (e) {
       if (e instanceof FirebaseError) {
@@ -97,6 +99,14 @@ const CreateAccount = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const onBookMarks = async () => {
+    const user = auth.currentUser;
+    await addDoc(collection(database, "bookMarks"), {
+      userId: user?.uid,
+      bookMarks: [] as Array<string>,
+    });
   };
 
   return (

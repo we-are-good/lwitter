@@ -1,35 +1,37 @@
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { TimeLineWrapper } from "../../style/homeStyle";
-import TweetContents from "../home/TweetContents";
-import type { TweetType } from "../../utils/types";
 import { auth, database } from "../../routes/firebase";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { TimeLineWrapper } from "../../style/homeStyle";
+import type { TweetType } from "../../utils/types";
+import TweetContents from "../home/TweetContents";
 
 const BookMarkstweets = () => {
   const [bookMarks, setBookMarks] = useState<TweetType[]>([]);
 
   const user = auth.currentUser;
+
   const fetchBookMarks = async () => {
     try {
-      const tweetQuery = query(
-        collection(database, "bookMarks"),
-        where("userId", "==", user?.uid),
-        orderBy("createdAt", "desc"),
-        limit(25)
+      if (!user) return;
+      const userBookMarksQuery = query(
+        collection(database, "tweets"),
+        where("bookMarkUserIds", "array-contains", user.uid)
       );
-      const snapshot = await getDocs(tweetQuery);
-      const tweets = snapshot.docs.map((doc) => {
-        const { tweet, createdAt, userId, username, photo } = doc.data();
-        return { tweet, createdAt, userId, username, photo, id: doc.id };
+      const snapshot = await getDocs(userBookMarksQuery);
+      const bookMarkTweets = snapshot.docs.map((doc) => {
+        const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
+          doc.data();
+        return {
+          tweet,
+          createdAt,
+          userId,
+          username,
+          photo,
+          bookMarkUserIds,
+          id: doc.id,
+        };
       });
-      setBookMarks(tweets);
+      setBookMarks(bookMarkTweets);
     } catch {
       console.error(Error);
     }
