@@ -26,7 +26,7 @@ const Mytweets = () => {
     );
     const snapshot = await getDocs(tweetQuery);
     const tweets: TweetType[] = snapshot.docs.map((doc) => {
-      const { tweet, createdAt, userId, username, photo, bookMarks } =
+      const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
         doc.data();
       return {
         tweet,
@@ -34,7 +34,7 @@ const Mytweets = () => {
         userId,
         username,
         photo,
-        bookMarks,
+        bookMarkUserIds,
         id: doc.id,
       };
     });
