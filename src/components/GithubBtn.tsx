@@ -1,8 +1,7 @@
 import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
-import styled from "styled-components";
-import { auth, database } from "../routes/firebase";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import styled from "styled-components";
+import { auth } from "../routes/firebase";
 
 const Button = styled.button`
   margin-top: 50px;
@@ -31,29 +30,9 @@ const GithubBtn = () => {
     try {
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
-      onBookMarks();
       navigate("/");
     } catch (e) {
       console.error(e);
-    }
-  };
-
-  const onBookMarks = async () => {
-    const user = auth.currentUser;
-    const UserBookMarksQuery = query(
-      collection(database, "profileContents"),
-      where("userId", "==", user?.uid)
-    );
-    const snapshot = await getDocs(UserBookMarksQuery);
-    const UserBookMarks = snapshot.docs.map((doc) => {
-      const { bookMarks, userId } = doc.data();
-      return { bookMarks, userId };
-    });
-    if (UserBookMarks.length > 0) {
-      await addDoc(collection(database, "bookMarks"), {
-        userId: user?.uid,
-        BookMarks: [],
-      });
     }
   };
 

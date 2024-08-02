@@ -1,13 +1,9 @@
 import {
   arrayRemove,
   arrayUnion,
-  collection,
   deleteDoc,
   doc,
-  getDocs,
-  query,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -230,7 +226,6 @@ const TweetContents = ({
     try {
       setIsBookMarked(true);
       addTweetBookMark();
-      addUserBookMark();
     } catch {
       console.error(Error);
     }
@@ -241,7 +236,6 @@ const TweetContents = ({
     try {
       setIsBookMarked(false);
       deleteTweetBookMark();
-      deleteUserBookMark();
     } catch {
       console.error(Error);
     }
@@ -256,43 +250,6 @@ const TweetContents = ({
     const tweetRef = doc(database, "tweets", id);
     const newBookmarkUserIds = [user?.uid];
     updateDoc(tweetRef, { bookMarkUserIds: arrayUnion(...newBookmarkUserIds) });
-  };
-
-  const deleteUserBookMark = async () => {
-    const userBookMarksQuery = query(
-      collection(database, "bookMarks"),
-      where("userId", "==", user?.uid)
-    );
-    const snapshot = await getDocs(userBookMarksQuery);
-    const userBookMarks = snapshot.docs.map((doc) => {
-      const { bookMarks, userId } = doc.data();
-      return { bookMarks, userId, bookMarksId: doc.id };
-    });
-    const userBookMarksRef = doc(
-      database,
-      "bookMarks",
-      userBookMarks[0].bookMarksId
-    );
-    updateDoc(userBookMarksRef, { bookMarks: arrayRemove(id) });
-  };
-
-  const addUserBookMark = async () => {
-    const userBookMarksQuery = query(
-      collection(database, "bookMarks"),
-      where("userId", "==", user?.uid)
-    );
-    const snapshot = await getDocs(userBookMarksQuery);
-    const userBookMarks = snapshot.docs.map((doc) => {
-      const { bookMarks, userId } = doc.data();
-      return { bookMarks, userId, bookMarksId: doc.id };
-    });
-    const userBookMarksRef = doc(
-      database,
-      "bookMarks",
-      userBookMarks[0].bookMarksId
-    );
-    const newUserBookMarks = [id];
-    updateDoc(userBookMarksRef, { bookMarks: arrayUnion(...newUserBookMarks) });
   };
 
   useEffect(() => {
