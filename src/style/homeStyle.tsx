@@ -21,7 +21,6 @@ export const Wrapper = styled.div`
 export const TimeLineWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 25px;
   gap: 20px;
   background-color: rgba(237, 246, 249, 1);
   border-radius: 15px;

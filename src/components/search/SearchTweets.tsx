@@ -21,6 +21,7 @@ const SearchForm = styled.form`
   padding: 20px;
   background-color: rgba(237, 246, 249, 1);
   border-radius: 20px;
+  margin-bottom: 20px;
 `;
 
 const SearchInput = styled.input`
@@ -47,6 +48,7 @@ const SearchButton = styled.button`
 
 const SearchTweets = () => {
   const [search, setSearch] = useState("");
+  const [isSearched, setIsSearched] = useState(false);
   const [tweets, setTweets] = useState<TweetType[]>([]);
 
   const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,27 +57,32 @@ const SearchTweets = () => {
 
   const tweetSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const tweetQuery = query(
-      collection(database, "tweets"),
-      where("tweet", "==", search),
-      orderBy("createdAt", "desc"),
-      limit(25)
-    );
-    const snapshot = await getDocs(tweetQuery);
-    const tweets = snapshot.docs.map((doc) => {
-      const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
-        doc.data();
-      return {
-        tweet,
-        createdAt,
-        userId,
-        username,
-        photo,
-        bookMarkUserIds,
-        id: doc.id,
-      };
-    });
-    setTweets(tweets);
+    try {
+      setIsSearched(true);
+      const tweetQuery = query(
+        collection(database, "tweets"),
+        where("tweet", "==", search),
+        orderBy("createdAt", "desc"),
+        limit(25)
+      );
+      const snapshot = await getDocs(tweetQuery);
+      const tweets = snapshot.docs.map((doc) => {
+        const { tweet, createdAt, userId, username, photo, bookMarkUserIds } =
+          doc.data();
+        return {
+          tweet,
+          createdAt,
+          userId,
+          username,
+          photo,
+          bookMarkUserIds,
+          id: doc.id,
+        };
+      });
+      setTweets(tweets);
+    } catch {
+      console.error(Error);
+    }
   };
 
   return (
@@ -94,7 +101,9 @@ const SearchTweets = () => {
       <TimeLineWrapper>
         {tweets.length > 0
           ? tweets.map((tweet) => <TweetContents key={tweet.id} {...tweet} />)
-          : `해당 트윗이 존재하지 않습니다.`}
+          : isSearched
+          ? `해당 트윗이 존재하지 않습니다.`
+          : `검색어를 입력해 주세요.`}
       </TimeLineWrapper>
     </>
   );

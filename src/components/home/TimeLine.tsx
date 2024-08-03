@@ -18,7 +18,7 @@ const TimeLine = () => {
 
   useEffect(() => {
     let unsubscribe: Unsubscribe | null = null;
-    const fetchWteets = async () => {
+    const fetchTweets = async () => {
       const tweetsQuery = query(
         collection(database, "tweets"),
         orderBy("createdAt", "desc"),
@@ -41,7 +41,7 @@ const TimeLine = () => {
         setTweets(documentTweets);
       });
     };
-    fetchWteets();
+    fetchTweets();
     return () => {
       unsubscribe && unsubscribe();
     };

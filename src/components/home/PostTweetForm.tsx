@@ -12,6 +12,7 @@ const Form = styled.form`
   background-color: rgba(237, 246, 249, 1);
   border-radius: 15px;
   padding: 20px;
+  margin-bottom: 20px;
 `;
 
 const ButtonsBox = styled.div`
