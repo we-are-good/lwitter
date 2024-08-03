@@ -23,7 +23,7 @@ const MyprofileWrap = styled.article`
 `;
 
 const BackgroundImg = styled.label`
-  width: 654px;
+  width: 650px;
   height: 200px;
   overflow: hidden;
   object-fit: cover;
